@@ -1,4 +1,4 @@
-#pragma once
+
 //user.h -- User class interface
 //version 00
 #ifndef USER_H_

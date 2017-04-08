@@ -1,6 +1,8 @@
+#include "stdafx.h"
 #include <iostream>
 #include "uav.h"
-#include "stdafx.h"
+
+using namespace std;
 
 Uav::Uav()
 {

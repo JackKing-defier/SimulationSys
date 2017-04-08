@@ -1,4 +1,4 @@
-#pragma once
+
 //uav.h -- Uav class interface
 //version 00
 #ifndef UAV_H_

@@ -2,8 +2,8 @@
 //
 
 #include "stdafx.h"
-#include "user.cpp"
-#include "uav.cpp"
+#include "user.h"
+#include "uav.h"
 #include <iostream>
 using namespace std;
 //使用初始化列表初始化对象
@@ -21,13 +21,13 @@ int main()
 	}
 
 
-/*
-	User u1;
-	Uav u2;
-	int id = 2;
-	u2.set_sno(id);
-	cout << "hello" << u2.get_sno() << endl;
-	*/
+	/*
+		User u1;
+		Uav u2;
+		int id = 2;
+		u2.set_sno(id);
+		cout << "hello" << u2.get_sno() << endl;
+		*/
 	return 0;
 }
 

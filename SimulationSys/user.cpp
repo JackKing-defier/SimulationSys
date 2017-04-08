@@ -1,9 +1,13 @@
+#include "stdafx.h"
 #include <iostream>
 #include "user.h"
 
+using namespace std;
+
+
 User::User()
 {
-	sno = (int)0;
+	sno = 0;
 	id = "";
 	lon = 0.0;
 	lat = 0.0;
