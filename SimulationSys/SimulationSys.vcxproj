@@ -142,6 +142,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <Text Include="Fout.txt" />
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
@@ -162,6 +163,9 @@
     </ClCompile>
     <ClCompile Include="uav.cpp" />
     <ClCompile Include="user.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="map.osm" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
