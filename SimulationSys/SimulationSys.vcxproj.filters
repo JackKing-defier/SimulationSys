@@ -16,7 +16,7 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
-    <Text Include="Fout.txt">
+    <Text Include="NodeInfo.txt">
       <Filter>资源文件</Filter>
     </Text>
   </ItemGroup>

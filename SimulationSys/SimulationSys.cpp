@@ -15,7 +15,7 @@ using namespace std;
 int main()
 {
 	/*int user_num = 0;
-	cout << "输入工作者数量" << endl;
+	cout << "输入工作者数 量" << endl;
 	cin >> user_num;
 
 	User* p_user = new User[user_num];
@@ -39,7 +39,7 @@ int main()
 
 	fileName = "map.osm";
 	ifstream  inFile;
-	ofstream  outFile("Fout.txt");
+	ofstream  outFile("NodeInfo.txt");
 	inFile.open(fileName.c_str());
 	if (!inFile)
 	{
@@ -47,6 +47,7 @@ int main()
 		return -1;
 	}
 
+	//识别并提取特定字符串
 	while (getline(inFile, node_temp))
 	{
 		//识别id
@@ -59,7 +60,7 @@ int main()
 		while (f1 != node_temp.npos)
 		{
 			node_id = node_temp.substr(f1 + 10, f2 - f1 - 10);
-			outFile << node_id << endl;
+			outFile << node_id << " ";
 			f1 = node_temp.find("<node id=\"", f2 + 1);
 			f2 = node_temp.find("\"", f1 + 10);
 		}
@@ -73,7 +74,7 @@ int main()
 		while (f3 != node_temp.npos)
 		{
 			node_lat = node_temp.substr(f3 + 7, f4 - f3 - 7);
-			outFile << node_lat << endl;
+			outFile << node_lat << " ";
 			f3 = node_temp.find("\" lat=\"", f4 + 1);
 			f4 = node_temp.find("\" lon=\"", f3 + 7);
 		}		
