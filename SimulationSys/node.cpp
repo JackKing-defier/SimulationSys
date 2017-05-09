@@ -9,7 +9,7 @@ Node::~Node()
 {
 }
 
-Node::Node(const string & s, float lo, float la)
+Node::Node(const string & s, double lo, double la)
 {
 	id = s;
 	lon = lo;
