@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include <iostream>
+#include <iomanip>
 #include "user.h"
 
 using namespace std;
@@ -36,5 +37,12 @@ User::~User()
 
 void User::show()
 {
-	cout << sno << id << lon << lat << isEnabled << isOnDuty << name << mid << endl;
+	cout << sno << "    ";
+	cout << id << "    ";
+	cout << fixed << setprecision(7) << lon << "    ";
+	cout << setprecision(7) << lat << "    ";
+	cout << isEnabled << "    "; 
+	cout << isOnDuty << "    "; 
+	cout << name << "    "; 
+	cout << mid << endl;
 }
