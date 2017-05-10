@@ -7,19 +7,19 @@
 #include <string>
 #include <vector>
 #include <iomanip>
+#include <cmath>
 #include "user.h"
 #include "uav.h"
 #include "node.h"
 #include "time.h"
 
 using namespace std;
-//使用初始化列表初始化对象
+bool move(float lon1, float lat1, float lon2, float lat2, vector<Node> &allnode, vector<Node> &rodenode);
+
+
 
 int main()
 {
-
-
-
 	/*
 		user u1;
 		uav u2;
@@ -115,12 +115,13 @@ int main()
 	//	cout << allnode[i].get_lon() << endl;//<< setprecision(7) 
 	//}
 
-	//************************生成用户以及分配坐标********************
+	//************************生成用户以及分配目的地********************
 	int user_num = 0;
 	cout << "输入工作者数量" << endl;
 	cin >> user_num;
 
 	User* p_user = new User[user_num];
+	Node* p_dest = new Node[user_num];//每个用户的目的地。
 	srand((unsigned)time(0));//跟随系统的随机数。
 	int node_index;
 	for (int i = 0; i < user_num; i++)
@@ -130,9 +131,74 @@ int main()
 		p_user[i].set_lat(allnode[node_index].get_lat());
 		p_user[i].set_lon(allnode[node_index].get_lon());
 		p_user[i].show();
+
+		node_index = rand() % allnode.size();
+		p_dest[i].set_id(allnode[node_index].get_id());
+		p_dest[i].set_lat(allnode[node_index].get_lat());
+		p_dest[i].set_lon(allnode[node_index].get_lon());
 	}
+
+	//**************用户坐标点根据路网坐标点，向目的地进行坐标移动。*************
+		//p_user[0].get_lat
+
+
+
 
 
 	return 0;
+}
+//##############需要处理的问题，在合适的地方结束方法。
+//在调用函数之前传入空容器rode_node，
+//温习一下参数 & 和 * 的区别
+bool move(float lon1, float lat1, float lon2, float lat2, vector<Node> &allnode, vector<Node> &rodenode)
+{
+	//vector<Node>::iterator it = allnode.begin();
+	double distance = sqrt(pow(abs(lon1 - lon2), 2.0) + pow(abs(lat1 - lat2), 2.0));
+	float temp_lat = lat1;
+	float temp_lon = lon1;
+	Node node_temp;
+	//it 是一个地址  
+	//下面四个判断分别对应目标点在用户的四个象限
+	if ((lon2 - lon1 >= 0) && (lat2 - lat1 > 0))
+	{
+		for (int i = 0; i < allnode.size(); i++)
+		{
+			if ((allnode[i].get_lat() > lat1) && (allnode[i].get_lat() < lat2)
+				&& (allnode[i].get_lon() >= lon1) && (allnode[i].get_lon() <= lon2))
+			{
+				//计算矩形区域内，各点和用户的距离
+				//寻找区域内，距离用户最近的标记点
+				if (distance >= sqrt(pow(abs(lon1 - allnode[i].get_lon()), 2.0) + pow(abs(lat1 - allnode[i].get_lat()), 2.0)))
+				{
+					distance = sqrt(pow(abs(lon1 - allnode[i].get_lon()), 2.0) + pow(abs(lat1 - allnode[i].get_lat()), 2.0));
+					temp_lon = allnode[i].get_lon();
+					temp_lat = allnode[i].get_lat();
+				}
+				
+			}
+		}//如何判断已经找到最后一个的情况距离判断修改成为小于等于
+		node_temp.set_lat(temp_lat);
+		node_temp.set_lon(temp_lon);
+		rodenode.push_back(node_temp);//将路径点记录到node_temp中
+		move(temp_lon, temp_lat, lon2, lat2, allnode, rodenode);
+	}
+	else if ((lon2 - lon1 < 0) && (lat2 - lat1 >= 0))
+	{
+
+	}
+	else if ((lon2 - lon1 <= 0) && (lat2 - lat1 < 0))
+	{
+
+	}
+	else if ((lon2 - lon1 > 0) && (lat2 - lat1 <= 0))
+	{
+
+	}
+	else if ((lon2 - lon1 == 0) && (lat2 - lat1 == 0))//到达目的地
+	{
+
+		return true;
+	}
+	return false;
 }
 
