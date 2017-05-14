@@ -14,7 +14,7 @@
 #include "time.h"
 
 using namespace std;
-bool move(float lon1, float lat1, float lon2, float lat2, vector<Node> &allnode, vector<Node> &rodenode);
+bool moveUser(double lon1, double lat1, double lon2, double lat2, vector<Node> &allnode, vector<Node> &rodenode);
 
 
 
@@ -130,7 +130,7 @@ int main()
 		p_user[i].set_sno(i + 1);
 		p_user[i].set_lat(allnode[node_index].get_lat());
 		p_user[i].set_lon(allnode[node_index].get_lon());
-		p_user[i].show();
+		//p_user[i].show();
 
 		node_index = rand() % allnode.size();
 		p_dest[i].set_id(allnode[node_index].get_id());
@@ -141,64 +141,128 @@ int main()
 	//**************用户坐标点根据路网坐标点，向目的地进行坐标移动。*************
 		//p_user[0].get_lat
 
-
-
+	//只有某一个工作者的完整路径需要记录下来。
+	//对第一个判断条件测试，分别取点(34.2440662 108.9096464)，(34.2450650 108.9117278)
+	vector<Node> waynode;
+	moveUser(p_user[0].get_lon(), p_user[0].get_lat(), p_dest[0].get_lon(), p_dest[0].get_lat(), allnode, waynode);
+	for (unsigned int j = 0; j < waynode.size(); j++)
+	{
+		cout << waynode[j].get_id() << "    ";
+		cout << fixed << setprecision(7) << waynode[j].get_lat() << "    ";
+		cout << waynode[j].get_lon() << endl;//<< setprecision(7) 
+	}
 
 
 	return 0;
 }
-//##############需要处理的问题，在合适的地方结束方法。
-//在调用函数之前传入空容器rode_node，
+
+//在调用函数之前传入空容器waynode，
 //温习一下参数 & 和 * 的区别
-bool move(float lon1, float lat1, float lon2, float lat2, vector<Node> &allnode, vector<Node> &rodenode)
+bool moveUser(double lon1, double lat1, double lon2, double lat2, vector<Node> &allnode, vector<Node> &waynode)
 {
 	//vector<Node>::iterator it = allnode.begin();
 	double distance = sqrt(pow(abs(lon1 - lon2), 2.0) + pow(abs(lat1 - lat2), 2.0));
-	float temp_lat = lat1;
-	float temp_lon = lon1;
+	double temp_lat = lat1;
+	double temp_lon = lon1;
 	Node node_temp;
-	//it 是一个地址  
 	//下面四个判断分别对应目标点在用户的四个象限
-	if ((lon2 - lon1 >= 0) && (lat2 - lat1 > 0))
+	if ((lon2 - lon1 == 0) && (lat2 - lat1 == 0))//到达目的地
 	{
-		for (int i = 0; i < allnode.size(); i++)
+		return true;
+	}else if ((lon2 - lon1 >= 0) && (lat2 - lat1 >= 0))
+	{
+		for (unsigned int i = 0; i < allnode.size(); i++)
 		{
-			if ((allnode[i].get_lat() > lat1) && (allnode[i].get_lat() < lat2)
+			if ((allnode[i].get_lat() >= lat1) && (allnode[i].get_lat() <= lat2)
 				&& (allnode[i].get_lon() >= lon1) && (allnode[i].get_lon() <= lon2))
 			{
 				//计算矩形区域内，各点和用户的距离
 				//寻找区域内，距离用户最近的标记点
-				if (distance >= sqrt(pow(abs(lon1 - allnode[i].get_lon()), 2.0) + pow(abs(lat1 - allnode[i].get_lat()), 2.0)))
+				if (distance > sqrt(pow(abs(lon1 - allnode[i].get_lon()), 2.0) + pow(abs(lat1 - allnode[i].get_lat()), 2.0)))
 				{
 					distance = sqrt(pow(abs(lon1 - allnode[i].get_lon()), 2.0) + pow(abs(lat1 - allnode[i].get_lat()), 2.0));
 					temp_lon = allnode[i].get_lon();
 					temp_lat = allnode[i].get_lat();
 				}
-				
 			}
-		}//如何判断已经找到最后一个的情况距离判断修改成为小于等于
+		}//如何判断已经找到最后一个的情况
+		if (distance == sqrt(pow(abs(lon1 - lon2), 2.0) + pow(abs(lat1 - lat2), 2.0)))
+			return true;
 		node_temp.set_lat(temp_lat);
 		node_temp.set_lon(temp_lon);
-		rodenode.push_back(node_temp);//将路径点记录到node_temp中
-		move(temp_lon, temp_lat, lon2, lat2, allnode, rodenode);
+		waynode.push_back(node_temp);//将路径点记录到waynode中
+		moveUser(temp_lon, temp_lat, lon2, lat2, allnode, waynode);
 	}
-	else if ((lon2 - lon1 < 0) && (lat2 - lat1 >= 0))
+	else if ((lon2 - lon1 <= 0) && (lat2 - lat1 >= 0))
 	{
-
+		for (unsigned int i = 0; i < allnode.size(); i++)
+		{
+			if ((allnode[i].get_lat() >= lat1) && (allnode[i].get_lat() <= lat2)
+				&& (allnode[i].get_lon() <= lon1) && (allnode[i].get_lon() >= lon2))
+			{
+				//寻找第二象限内，距离用户最近的标记点
+				if (distance > sqrt(pow(abs(lon1 - allnode[i].get_lon()), 2.0) + pow(abs(lat1 - allnode[i].get_lat()), 2.0)))
+				{
+					distance = sqrt(pow(abs(lon1 - allnode[i].get_lon()), 2.0) + pow(abs(lat1 - allnode[i].get_lat()), 2.0));
+					temp_lon = allnode[i].get_lon();
+					temp_lat = allnode[i].get_lat();
+				}
+			}
+		}
+		if (distance == sqrt(pow(abs(lon1 - lon2), 2.0) + pow(abs(lat1 - lat2), 2.0)))
+			return true;
+		node_temp.set_lat(temp_lat);
+		node_temp.set_lon(temp_lon);
+		waynode.push_back(node_temp);
+		moveUser(temp_lon, temp_lat, lon2, lat2, allnode, waynode);
 	}
-	else if ((lon2 - lon1 <= 0) && (lat2 - lat1 < 0))
+	else if ((lon2 - lon1 <= 0) && (lat2 - lat1 <= 0))
 	{
-
+		for (unsigned int i = 0; i < allnode.size(); i++)
+		{
+			if ((allnode[i].get_lat() <= lat1) && (allnode[i].get_lat() >= lat2)
+				&& (allnode[i].get_lon() <= lon1) && (allnode[i].get_lon() >= lon2))
+			{
+				//寻找第三象限内，距离用户最近的标记点
+				if (distance > sqrt(pow(abs(lon1 - allnode[i].get_lon()), 2.0) + pow(abs(lat1 - allnode[i].get_lat()), 2.0)))
+				{
+					distance = sqrt(pow(abs(lon1 - allnode[i].get_lon()), 2.0) + pow(abs(lat1 - allnode[i].get_lat()), 2.0));
+					temp_lon = allnode[i].get_lon();
+					temp_lat = allnode[i].get_lat();
+				}
+			}
+		}
+		if (distance == sqrt(pow(abs(lon1 - lon2), 2.0) + pow(abs(lat1 - lat2), 2.0)))
+			return true;
+		node_temp.set_lat(temp_lat);
+		node_temp.set_lon(temp_lon);
+		waynode.push_back(node_temp);
+		moveUser(temp_lon, temp_lat, lon2, lat2, allnode, waynode);
 	}
-	else if ((lon2 - lon1 > 0) && (lat2 - lat1 <= 0))
+	else if ((lon2 - lon1 >= 0) && (lat2 - lat1 <= 0))
 	{
-
+		for (unsigned int i = 0; i < allnode.size(); i++)
+		{
+			if ((allnode[i].get_lat() <= lat1) && (allnode[i].get_lat() >= lat2)
+				&& (allnode[i].get_lon() >= lon1) && (allnode[i].get_lon() <= lon2))
+			{
+				//寻找第四象限内，距离用户最近的标记点
+				if (distance > sqrt(pow(abs(lon1 - allnode[i].get_lon()), 2.0) + pow(abs(lat1 - allnode[i].get_lat()), 2.0)))
+				{
+					distance = sqrt(pow(abs(lon1 - allnode[i].get_lon()), 2.0) + pow(abs(lat1 - allnode[i].get_lat()), 2.0));
+					temp_lon = allnode[i].get_lon();
+					temp_lat = allnode[i].get_lat();
+				}
+			}
+		}
+		if (distance == sqrt(pow(abs(lon1 - lon2), 2.0) + pow(abs(lat1 - lat2), 2.0)))
+			return true;
+		node_temp.set_lat(temp_lat);
+		node_temp.set_lon(temp_lon);
+		waynode.push_back(node_temp);
+		moveUser(temp_lon, temp_lat, lon2, lat2, allnode, waynode);
 	}
-	else if ((lon2 - lon1 == 0) && (lat2 - lat1 == 0))//到达目的地
-	{
-
-		return true;
-	}
+	
 	return false;
 }
 
