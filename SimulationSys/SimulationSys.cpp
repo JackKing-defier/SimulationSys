@@ -77,7 +77,7 @@ int main()
 
 		//识别lon
 		size_t f5 = nodeinfo_temp.find("\" lon=\"", 0);
-		size_t f6 = nodeinfo_temp.find("\"/>", f5 + 7);
+		size_t f6 = nodeinfo_temp.find("\"", f5 + 7);
 
 		string node_lon;
 		double node_lon_f;
@@ -89,7 +89,7 @@ int main()
 			node_lon_f = atof(node_lon.c_str());
 			node_temp.set_lon(node_lon_f); //string转double
 			f5 = nodeinfo_temp.find("\" lon=\"", f6 + 1);
-			f6 = nodeinfo_temp.find("\"/>", f5 + 7);
+			f6 = nodeinfo_temp.find("\"", f5 + 7);
 		}
 		if (node_id != "")
 		{
@@ -104,7 +104,8 @@ int main()
 	//{
 	//	cout << allnode[i].get_id() << "    ";
 	//	cout << fixed << setprecision(7) << allnode[i].get_lat() << "    ";
-	//	cout << allnode[i].get_lon() << endl;//<< setprecision(7) 
+	//	cout << allnode[i].get_lon() << "    ";//<< setprecision(7) 
+	//	cout << i << endl;
 	//}
 
 	//************************生成用户以及分配目的地********************
@@ -132,7 +133,6 @@ int main()
 
 	//**************用户坐标点根据路网坐标点，向目的地进行坐标移动。*************
 	//只有某一个拥有任务的工作者的完整路径需要记录下来。
-	//对第一个判断条件测试，分别取点(34.2440662 108.9096464)，(34.2450650 108.9117278)
 	vector<Node> waynode;
 	moveUser(p_user[0].get_lon(), p_user[0].get_lat(), p_dest[0].get_lon(), p_dest[0].get_lat(), allnode, waynode);
 	for (unsigned int j = 0; j < waynode.size(); j++)
@@ -145,11 +145,9 @@ int main()
 	return 0;
 }
 
-//在调用函数之前传入空容器waynode，
-//温习一下参数 & 和 * 的区别
+//在调用函数之前传入空容器waynode，温习一下参数 & 和 * 的区别
 bool moveUser(double lon1, double lat1, double lon2, double lat2, vector<Node> &allnode, vector<Node> &waynode)
 {
-	//vector<Node>::iterator it = allnode.begin();
 	double distance = sqrt(pow(abs(lon1 - lon2), 2.0) + pow(abs(lat1 - lat2), 2.0));
 	double temp_lat = lat1;
 	double temp_lon = lon1;
