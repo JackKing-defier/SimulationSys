@@ -123,7 +123,6 @@ int main()
 		p_user[i].set_sno(i + 1);
 		p_user[i].set_lat(allnode[node_index].get_lat());
 		p_user[i].set_lon(allnode[node_index].get_lon());
-		//p_user[i].show();
 
 		node_index = rand() % allnode.size();
 		p_dest[i].set_id(allnode[node_index].get_id());
@@ -172,7 +171,7 @@ bool moveUser(double lon1, double lat1, double lon2, double lat2, vector<Node> &
 					temp_lat = allnode[i].get_lat();
 				}
 			}
-		}//如何判断已经找到最后一个的情况
+		}//如何判断已经找到目的地
 		if (distance == sqrt(pow(abs(lon1 - lon2), 2.0) + pow(abs(lat1 - lat2), 2.0)))
 		{
 			return true;
