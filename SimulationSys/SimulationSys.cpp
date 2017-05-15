@@ -20,14 +20,7 @@ bool moveUser(double lon1, double lat1, double lon2, double lat2, vector<Node> &
 
 int main()
 {
-	/*
-		user u1;
-		uav u2;
-		int id = 2;
-		u2.set_sno(id);
-		cout << "hello" << u2.get_sno() << endl;
-		*/
-		//cout.setf(ios_base::basefield, ios_base::doublefield);
+	//cout.setf(ios_base::basefield, ios_base::doublefield);
 	string filename, nodeinfo_temp;
 	int count = 0;
 
@@ -43,7 +36,7 @@ int main()
 
 	Node node_temp;
 	vector<Node> allnode;
-	//int nullnodeinfo = 3;//地图数据中前三行不是节点数据。
+
 //***************创建对象数组并且在读取的时候进行赋值***********************
 	//识别并提取特定字符串
 	while (getline(infile, nodeinfo_temp))
@@ -98,7 +91,6 @@ int main()
 			f5 = nodeinfo_temp.find("\" lon=\"", f6 + 1);
 			f6 = nodeinfo_temp.find("\"/>", f5 + 7);
 		}
-		//控制掉前三行的非节点数据。
 		if (node_id != "")
 		{
 			allnode.push_back(node_temp);
@@ -139,9 +131,7 @@ int main()
 	}
 
 	//**************用户坐标点根据路网坐标点，向目的地进行坐标移动。*************
-		//p_user[0].get_lat
-
-	//只有某一个工作者的完整路径需要记录下来。
+	//只有某一个拥有任务的工作者的完整路径需要记录下来。
 	//对第一个判断条件测试，分别取点(34.2440662 108.9096464)，(34.2450650 108.9117278)
 	vector<Node> waynode;
 	moveUser(p_user[0].get_lon(), p_user[0].get_lat(), p_dest[0].get_lon(), p_dest[0].get_lat(), allnode, waynode);
@@ -151,8 +141,7 @@ int main()
 		cout << fixed << setprecision(7) << waynode[j].get_lat() << "    ";
 		cout << waynode[j].get_lon() << endl;//<< setprecision(7) 
 	}
-
-
+	
 	return 0;
 }
 
@@ -165,19 +154,19 @@ bool moveUser(double lon1, double lat1, double lon2, double lat2, vector<Node> &
 	double temp_lat = lat1;
 	double temp_lon = lon1;
 	Node node_temp;
-	//下面四个判断分别对应目标点在用户的四个象限
 	if ((lon2 - lon1 == 0) && (lat2 - lat1 == 0))//到达目的地
 	{
+		cout << "equal" << endl;
 		return true;
 	}else if ((lon2 - lon1 >= 0) && (lat2 - lat1 >= 0))
 	{
 		for (unsigned int i = 0; i < allnode.size(); i++)
 		{
 			if ((allnode[i].get_lat() >= lat1) && (allnode[i].get_lat() <= lat2)
-				&& (allnode[i].get_lon() >= lon1) && (allnode[i].get_lon() <= lon2))
+				&& (allnode[i].get_lon() >= lon1) && (allnode[i].get_lon() <= lon2)
+				&& !((allnode[i].get_lat() == lat1)&& (allnode[i].get_lon() >= lon1)))
 			{
-				//计算矩形区域内，各点和用户的距离
-				//寻找区域内，距离用户最近的标记点
+				//寻找区域内，距离用户最近的标记点作为下一个经过点。
 				if (distance > sqrt(pow(abs(lon1 - allnode[i].get_lon()), 2.0) + pow(abs(lat1 - allnode[i].get_lat()), 2.0)))
 				{
 					distance = sqrt(pow(abs(lon1 - allnode[i].get_lon()), 2.0) + pow(abs(lat1 - allnode[i].get_lat()), 2.0));
@@ -187,7 +176,10 @@ bool moveUser(double lon1, double lat1, double lon2, double lat2, vector<Node> &
 			}
 		}//如何判断已经找到最后一个的情况
 		if (distance == sqrt(pow(abs(lon1 - lon2), 2.0) + pow(abs(lat1 - lat2), 2.0)))
+		{
 			return true;
+		}
+			
 		node_temp.set_lat(temp_lat);
 		node_temp.set_lon(temp_lon);
 		waynode.push_back(node_temp);//将路径点记录到waynode中
@@ -198,7 +190,8 @@ bool moveUser(double lon1, double lat1, double lon2, double lat2, vector<Node> &
 		for (unsigned int i = 0; i < allnode.size(); i++)
 		{
 			if ((allnode[i].get_lat() >= lat1) && (allnode[i].get_lat() <= lat2)
-				&& (allnode[i].get_lon() <= lon1) && (allnode[i].get_lon() >= lon2))
+				&& (allnode[i].get_lon() <= lon1) && (allnode[i].get_lon() >= lon2)
+				&& !((allnode[i].get_lat() == lat1) && (allnode[i].get_lon() >= lon1)))
 			{
 				//寻找第二象限内，距离用户最近的标记点
 				if (distance > sqrt(pow(abs(lon1 - allnode[i].get_lon()), 2.0) + pow(abs(lat1 - allnode[i].get_lat()), 2.0)))
@@ -221,7 +214,8 @@ bool moveUser(double lon1, double lat1, double lon2, double lat2, vector<Node> &
 		for (unsigned int i = 0; i < allnode.size(); i++)
 		{
 			if ((allnode[i].get_lat() <= lat1) && (allnode[i].get_lat() >= lat2)
-				&& (allnode[i].get_lon() <= lon1) && (allnode[i].get_lon() >= lon2))
+				&& (allnode[i].get_lon() <= lon1) && (allnode[i].get_lon() >= lon2)
+				&& !((allnode[i].get_lat() == lat1) && (allnode[i].get_lon() >= lon1)))
 			{
 				//寻找第三象限内，距离用户最近的标记点
 				if (distance > sqrt(pow(abs(lon1 - allnode[i].get_lon()), 2.0) + pow(abs(lat1 - allnode[i].get_lat()), 2.0)))
@@ -244,7 +238,8 @@ bool moveUser(double lon1, double lat1, double lon2, double lat2, vector<Node> &
 		for (unsigned int i = 0; i < allnode.size(); i++)
 		{
 			if ((allnode[i].get_lat() <= lat1) && (allnode[i].get_lat() >= lat2)
-				&& (allnode[i].get_lon() >= lon1) && (allnode[i].get_lon() <= lon2))
+				&& (allnode[i].get_lon() >= lon1) && (allnode[i].get_lon() <= lon2)
+				&& !((allnode[i].get_lat() == lat1) && (allnode[i].get_lon() >= lon1)))
 			{
 				//寻找第四象限内，距离用户最近的标记点
 				if (distance > sqrt(pow(abs(lon1 - allnode[i].get_lon()), 2.0) + pow(abs(lat1 - allnode[i].get_lat()), 2.0)))
