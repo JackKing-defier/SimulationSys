@@ -18,7 +18,7 @@ User::User()
 	mid = "";
 }
 
-User::User(int s, const string & i, float lo, float la, const string & e, const string & o, const string & n, const string & m)
+User::User(int s, const string & i, double lo, double la, const string & e, const string & o, const string & n, const string & m)
 {
 	sno = s;
 	id = i;

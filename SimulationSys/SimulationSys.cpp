@@ -15,7 +15,7 @@
 
 using namespace std;
 bool moveUser(double lon1, double lat1, double lon2, double lat2, vector<Node> &allnode, vector<Node> &rodenode);
-
+const int UAV_SPEED = 50;//无人机平均速度 50 km/h。
 
 
 int main()
@@ -37,7 +37,7 @@ int main()
 	Node node_temp;
 	vector<Node> allnode;
 
-//***************创建对象数组并且在读取的时候进行赋值***********************
+	//***************创建对象数组并且在读取的时候进行赋值***********************
 	//识别并提取特定字符串
 	while (getline(infile, nodeinfo_temp))
 	{
@@ -95,7 +95,7 @@ int main()
 		{
 			allnode.push_back(node_temp);
 		}
-
+		outfile.close();
 
 	}
 
@@ -110,13 +110,19 @@ int main()
 
 	//************************生成用户以及分配目的地********************
 	int user_num = 0;
+	int uav_num = 0;
 	cout << "输入工作者数量" << endl;
 	cin >> user_num;
+	/*cout << "输入无人机数量" << endl;
+	cin >> uav_num;*/
 
+	Uav* p_uav = new Uav[uav_num];
 	User* p_user = new User[user_num];
 	Node* p_dest = new Node[user_num];//每个用户的目的地。
+	Node* p_uavgoal = new Node[uav_num];//每个无人机的目标点。
 	srand((unsigned)time(0));//跟随系统的随机数。
 	int node_index;
+
 	for (int i = 0; i < user_num; i++)
 	{
 		node_index = rand() % allnode.size();
@@ -129,20 +135,56 @@ int main()
 		p_dest[i].set_lat(allnode[node_index].get_lat());
 		p_dest[i].set_lon(allnode[node_index].get_lon());
 	}
+	/*for (int u = 0; u < user_num; u++)
+	{
+		node_index = rand() % allnode.size();
+		p_uav[u].set_sno(u + 1);
+		p_uav[u].set_lat(allnode[0].get_lat());
+		p_uav[u].set_lon(allnode[0].get_lon());
+
+		node_index = rand() % allnode.size();
+		p_uavgoal[u].set_id(allnode[node_index].get_id());
+		p_uavgoal[u].set_lat(allnode[node_index].get_lat());
+		p_uavgoal[u].set_lon(allnode[node_index].get_lon());
+	}*/
 
 	//**************用户坐标点根据路网坐标点，向目的地进行坐标移动。*************
 	//只有某一个拥有任务的工作者的完整路径需要记录下来。
 	vector<Node> waynode;
-	moveUser(p_user[0].get_lon(), p_user[0].get_lat(), p_dest[0].get_lon(), p_dest[0].get_lat(), allnode, waynode);
-	for (unsigned int j = 0; j < waynode.size(); j++)
+	ofstream  wayfile;
+	string exten = ".txt";
+	//string testname = "";
+	for (int f = 0; f < user_num; f++)
 	{
-		cout << waynode[j].get_id() << "    ";
-		cout << fixed << setprecision(7) << waynode[j].get_lat() << "    ";
-		cout << waynode[j].get_lon() << endl;//<< setprecision(7) 
+		moveUser(p_user[f].get_lon(), p_user[f].get_lat(), p_dest[f].get_lon(), p_dest[f].get_lat(), allnode, waynode);
+		remove(to_string(f + 1).append(".txt").c_str());
+		wayfile.open(to_string(f + 1).append(".txt"));
+		wayfile << fixed << setprecision(7) << p_user[f].get_lat() << "    ";
+		wayfile << p_user[f].get_lon() << endl;
+		for (unsigned int j = 0; j < waynode.size(); j++)
+		{
+			//cout << waynode[j].get_id() << "    ";
+			//cout << fixed << setprecision(7) << waynode[j].get_lat() << "    ";
+			//cout << waynode[j].get_lon() << endl;//<< setprecision(7) 
+			wayfile << waynode[j].get_lat() << "    ";
+			wayfile << waynode[j].get_lon() << endl;
+		}
+		wayfile << p_dest[f].get_lat() << "    ";
+		wayfile << p_dest[f].get_lon() << endl;
+		wayfile.close();
+		waynode.clear();
 	}
-	
+
+
 	return 0;
 }
+
+//bool moveUav(double lon1, double lat1, double lon2, double lat2,vector<Node> uavnode)
+//{
+//
+//	return false;
+//}
+
 
 //在调用函数之前传入空容器waynode，温习一下参数 & 和 * 的区别
 bool moveUser(double lon1, double lat1, double lon2, double lat2, vector<Node> &allnode, vector<Node> &waynode)
@@ -153,15 +195,15 @@ bool moveUser(double lon1, double lat1, double lon2, double lat2, vector<Node> &
 	Node node_temp;
 	if ((lon2 - lon1 == 0) && (lat2 - lat1 == 0))//到达目的地
 	{
-		cout << "equal" << endl;
 		return true;
-	}else if ((lon2 - lon1 >= 0) && (lat2 - lat1 >= 0))
+	}
+	else if ((lon2 - lon1 >= 0) && (lat2 - lat1 >= 0))
 	{
 		for (unsigned int i = 0; i < allnode.size(); i++)
 		{
 			if ((allnode[i].get_lat() >= lat1) && (allnode[i].get_lat() <= lat2)
 				&& (allnode[i].get_lon() >= lon1) && (allnode[i].get_lon() <= lon2)
-				&& !((allnode[i].get_lat() == lat1)&& (allnode[i].get_lon() >= lon1)))
+				&& !((allnode[i].get_lat() == lat1) && (allnode[i].get_lon() >= lon1)))
 			{
 				//寻找区域内，距离用户最近的标记点作为下一个经过点。
 				if (distance > sqrt(pow(abs(lon1 - allnode[i].get_lon()), 2.0) + pow(abs(lat1 - allnode[i].get_lat()), 2.0)))
@@ -176,7 +218,7 @@ bool moveUser(double lon1, double lat1, double lon2, double lat2, vector<Node> &
 		{
 			return true;
 		}
-			
+
 		node_temp.set_lat(temp_lat);
 		node_temp.set_lon(temp_lon);
 		waynode.push_back(node_temp);//将路径点记录到waynode中
@@ -254,7 +296,7 @@ bool moveUser(double lon1, double lat1, double lon2, double lat2, vector<Node> &
 		waynode.push_back(node_temp);
 		moveUser(temp_lon, temp_lat, lon2, lat2, allnode, waynode);
 	}
-	
+
 	return false;
 }
 

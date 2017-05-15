@@ -21,6 +21,8 @@ private:
 	string resolution;
 	string min_focus;
 	string max_focus;
+	float lon;
+	float lat;
 public:
 	int get_sno() const { return sno; };
 	string get_id() const { return id; };
@@ -33,6 +35,8 @@ public:
 	string get_resolution() const { return resolution; };
 	string get_min_focus() const { return min_focus; };
 	string get_max_focus() const { return max_focus; };
+	float get_lon() const { return lon; };
+	float get_lat() const { return lat; };
 
 	void set_sno(int s) { sno = s; };
 	void set_id(string i) { id = i; };
@@ -45,6 +49,8 @@ public:
 	void set_resolution(string r) { resolution = r; };
 	void set_min_focus(string mf) { min_focus = mf; };
 	void set_max_focus(string maxf) { max_focus = maxf; };
+	void set_lon(float lo) { lon = lo; };
+	void set_lat(float la) { lat = la; };
 
 	void show();
 
