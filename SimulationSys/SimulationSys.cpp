@@ -24,7 +24,7 @@ int main()
 	string filename, nodeinfo_temp;
 	int count = 0;
 
-	filename = "map.osm";
+	filename = "mapNewCampus.osm"; //新校区文件mapNewCampus.osm
 	ifstream  infile;
 	ofstream  outfile("nodeinfo.txt");
 	infile.open(filename.c_str());

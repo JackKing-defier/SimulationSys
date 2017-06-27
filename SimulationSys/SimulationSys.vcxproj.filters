@@ -55,5 +55,8 @@
     <None Include="map.osm">
       <Filter>资源文件</Filter>
     </None>
+    <None Include="mapNewCampus.osm">
+      <Filter>资源文件</Filter>
+    </None>
   </ItemGroup>
 </Project>
