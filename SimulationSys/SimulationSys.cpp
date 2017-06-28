@@ -102,9 +102,9 @@ int main()
 	////格式化输出坐标点
 	//for (int i = 0; i < allnode.size(); i++)
 	//{
-	//	cout << allnode[i].get_id() << "    ";
-	//	cout << fixed << setprecision(7) << allnode[i].get_lat() << "    ";
-	//	cout << allnode[i].get_lon() << "    ";//<< setprecision(7) 
+	//	cout << allnode[i].get_id() << ",";
+	//	cout << fixed << setprecision(7) << allnode[i].get_lat() << ",";
+	//	cout << allnode[i].get_lon() << ",";//<< setprecision(7) 
 	//	cout << i << endl;
 	//}
 
@@ -159,17 +159,17 @@ int main()
 		moveUser(p_user[f].get_lon(), p_user[f].get_lat(), p_dest[f].get_lon(), p_dest[f].get_lat(), allnode, waynode);
 		remove(to_string(f + 1).append(".txt").c_str());
 		wayfile.open(to_string(f + 1).append(".txt"));
-		wayfile << fixed << setprecision(7) << p_user[f].get_lat() << "    ";
+		wayfile << fixed << setprecision(7) << p_user[f].get_lat() << ",";
 		wayfile << p_user[f].get_lon() << endl;
 		for (unsigned int j = 0; j < waynode.size(); j++)
 		{
-			//cout << waynode[j].get_id() << "    ";
-			//cout << fixed << setprecision(7) << waynode[j].get_lat() << "    ";
+			//cout << waynode[j].get_id() << ",";
+			//cout << fixed << setprecision(7) << waynode[j].get_lat() << ",";
 			//cout << waynode[j].get_lon() << endl;//<< setprecision(7) 
-			wayfile << waynode[j].get_lat() << "    ";
+			wayfile << waynode[j].get_lat() << ",";
 			wayfile << waynode[j].get_lon() << endl;
 		}
-		wayfile << p_dest[f].get_lat() << "    ";
+		wayfile << p_dest[f].get_lat() << ",";
 		wayfile << p_dest[f].get_lon() << endl;
 		wayfile.close();
 		waynode.clear();
